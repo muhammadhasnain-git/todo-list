@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hasnain's To-Do App</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: 60px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #2c3e50;
+      }
+
+      .todo-input {
+        display: flex;
+        margin-bottom: 20px;
+      }
+
+      #taskInput {
+        flex: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        padding: 10px 20px;
+        margin-left: 10px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      li {
+        padding: 12px;
+        margin-bottom: 10px;
+        background-color: #ecf0f1;
+        border-radius: 4px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      li.completed {
+        text-decoration: line-through;
+        color: gray;
+      }
+
+      .delete-btn {
+        background: red;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>To-Do List</h1>
+      <div class="todo-input">
+        <input type="text" id="taskInput" placeholder="Add new task..." />
+        <button onclick="addTask()">Add</button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+
+    <script>
+      window.onload = function () {
+        loadTasks();
+      };
+
+      function addTask() {
+        const taskInput = document.getElementById("taskInput");
+        const task = taskInput.value.trim();
+
+        if (task !== "") {
+          const tasks = getTasks();
+          tasks.push({ text: task, completed: false });
+          saveTasks(tasks);
+          taskInput.value = "";
+          renderTasks();
+        }
+      }
+
+      function renderTasks() {
+        const tasks = getTasks();
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+          const li = document.createElement("li");
+          li.className = task.completed ? "completed" : "";
+
+          li.innerHTML = `
+      <span onclick="toggleComplete(${index})">${task.text}</span>
+      <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+    `;
+
+          taskList.appendChild(li);
+        });
+      }
+
+      function toggleComplete(index) {
+        const tasks = getTasks();
+        tasks[index].completed = !tasks[index].completed;
+        saveTasks(tasks);
+        renderTasks();
+      }
+
+      function deleteTask(index) {
+        const tasks = getTasks();
+        tasks.splice(index, 1);
+        saveTasks(tasks);
+        renderTasks();
+      }
+
+      function getTasks() {
+        return JSON.parse(localStorage.getItem("tasks") || "[]");
+      }
+
+      function saveTasks(tasks) {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+
+      function loadTasks() {
+        renderTasks();
+      }
+    </script>
+  </body>
+</html>
